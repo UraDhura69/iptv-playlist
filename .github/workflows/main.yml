@@ -1,0 +1,25 @@
+name: Auto Update YOLO Playlist
+
+on:
+  schedule:
+    - cron: "0 */1 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Download Playlist
+        run: curl -L "https://raw.githubusercontent.com/UraDhura69/iptv-playlist/main/YOLO.m3u8" -o YOLO.m3u
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "bot"
+          git config --global user.email "bot@email.com"
+          git add YOLO.m3u
+          git diff --quiet && git diff --staged --quiet || git commit -m "auto update YOLO"
+          git push
